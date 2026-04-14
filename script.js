@@ -1,40 +1,22 @@
-const resultEl = document.getElementById('result');
-const lengthEl = document.getElementById('length');
-const uppercaseEl = document.getElementById('uppercase');
-const numbersEl = document.getElementById('numbers');
-const symbolsEl = document.getElementById('symbols');
-const generateEl = document.getElementById('generate');
-const clipboardEl = document.getElementById('clipboard');
-
-const randomFunc = {
-    lower: () => String.fromCharCode(Math.floor(Math.random() * 26) + 97),
-    upper: () => String.fromCharCode(Math.floor(Math.random() * 26) + 65),
-    number: () => String.fromCharCode(Math.floor(Math.random() * 10) + 48),
-    symbol: () => "!@#$%^&*()_+~`|}{[]:;?><,./-=".charAt(Math.floor(Math.random() * 29))
-};
-
-// Kopyalama Butonu Olayı
-clipboardEl.addEventListener('click', () => {
-    const password = resultEl.innerText;
-    if (!password || password === "Şifre Bekleniyor...") return;
-    
-    navigator.clipboard.writeText(password);
-    alert('Şifre panoya kopyalandı!');
-});
-
-generateEl.addEventListener('click', () => {
-    const length = +lengthEl.value;
-    const hasUpper = uppercaseEl.checked;
-    const hasNumber = numbersEl.checked;
-    const hasSymbol = symbolsEl.checked;
-
-    resultEl.innerText = generatePassword(hasUpper, hasNumber, hasSymbol, length);
-});
+// ... üst kısımdaki değişkenler ve randomFunc aynı kalacak ...
 
 function generatePassword(upper, number, symbol, length) {
     let generatedPassword = '';
-    const typesCount = 1 + upper + number + symbol;
-    const typesArr = [{lower: true}, {upper}, {number}, {symbol}].filter(item => Object.values(item)[0]);
+    
+    // Küçük harf kutusu eklemediğimiz için onu da bir seçenek gibi düşünelim
+    // Ama eğer kullanıcı sadece sayı veya sembol istiyorsa, harfleri dahil etmemeliyiz.
+    
+    const typesArr = [];
+    if (upper) typesArr.push({upper});
+    if (number) typesArr.push({number});
+    if (symbol) typesArr.push({symbol});
+    
+    // Eğer hiçbir kutu işaretli değilse, sadece küçük harf üret (veya boş bırak)
+    if (typesArr.length === 0) {
+        typesArr.push({lower: true});
+    }
+
+    const typesCount = typesArr.length;
 
     if (typesCount === 0) return '';
 
@@ -44,5 +26,7 @@ function generatePassword(upper, number, symbol, length) {
             generatedPassword += randomFunc[funcName]();
         });
     }
-    return generatedPassword.slice(0, length);
+
+    // Şifreyi biraz daha karıştırıp (shuffle) istediğimiz uzunlukta kesiyoruz
+    return generatedPassword.slice(0, length).split('').sort(() => 0.5 - Math.random()).join('');
 }

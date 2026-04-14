@@ -3,24 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Generator</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Güvenli Şifre Üretici</title>
+    <style>
+        :root { --primary: #6366f1; --bg: #0f172a; --card: #1e293b; }
+        body {
+            background: var(--bg); color: #f8fafc; font-family: sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; padding: 20px;
+        }
+        .container {
+            background: var(--card); padding: 2rem; border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px;
+        }
+        .result-container {
+            background: rgba(15,23,42,0.6); display: flex;
+            justify-content: space-between; align-items: center;
+            padding: 15px; margin: 20px 0; border-radius: 8px;
+            border: 1px solid #334155; min-height: 30px;
+        }
+        #result { word-break: break-all; font-size: 1.2rem; font-family: monospace; }
+        button { cursor: pointer; transition: 0.2s; }
+        #clipboard { background: var(--primary); border: none; color: white; padding: 8px; border-radius: 4px; }
+        .setting { display: flex; justify-content: space-between; margin: 15px 0; }
+        .btn-large {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white; border: none; padding: 15px; width: 100%;
+            border-radius: 8px; font-weight: bold; font-size: 1rem;
+        }
+        .btn-large:active { transform: scale(0.98); }
+        input[type="number"] { background: #334155; border: 1px solid #475569; color: white; padding: 5px; border-radius: 4px; width: 50px; }
+    </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>Şifre Üretici</h1>
+        <h2 style="margin-top:0; color:var(--primary)">Şifre Üretici</h2>
         
         <div class="result-container">
             <span id="result">Şifre Bekleniyor...</span>
-            <button id="clipboard" title="Kopyala">
-                📋
-            </button>
+            <button id="clipboard">Kopyala</button>
         </div>
 
         <div class="settings">
             <div class="setting">
                 <label>Uzunluk</label>
-                <input type="number" id="length" min="4" max="25" value="12">
+                <input type="number" id="length" min="4" max="50" value="12">
             </div>
             <div class="setting">
                 <label>Büyük Harf</label>
@@ -32,12 +59,67 @@
             </div>
             <div class="setting">
                 <label>Semboller</label>
-                <input type="checkbox" id="symbols" checked>
+                <input type="checkbox" id="symbols">
             </div>
         </div>
 
-        <button class="btn-large" id="generate">YENİ ŞİFRE OLUŞTUR</button>
+        <button class="btn-large" id="generate">ŞİFRE OLUŞTUR</button>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        const resultEl = document.getElementById('result');
+        const lengthEl = document.getElementById('length');
+        const uppercaseEl = document.getElementById('uppercase');
+        const numbersEl = document.getElementById('numbers');
+        const symbolsEl = document.getElementById('symbols');
+        const generateEl = document.getElementById('generate');
+        const clipboardEl = document.getElementById('clipboard');
+
+        const chars = {
+            upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+            lower: 'abcdefghijklmnopqrstuvwxyz',
+            number: '0123456789',
+            symbol: '!@#$%^&*()_+=-'
+        };
+
+        generateEl.addEventListener('click', () => {
+            const length = +lengthEl.value;
+            const hasUpper = uppercaseEl.checked;
+            const hasNumber = numbersEl.checked;
+            const hasSymbol = symbolsEl.checked;
+
+            let charPool = chars.lower; // Küçük harf her zaman olsun mu? 
+            // Eğer sadece sayılar işaretliyse küçük harfi çıkaralım:
+            if (hasUpper || hasNumber || hasSymbol) {
+                charPool = ''; 
+                if (hasUpper) charPool += chars.upper;
+                if (hasNumber) charPool += chars.number;
+                if (hasSymbol) charPool += chars.symbol;
+            }
+
+            // Eğer hiçbir şey seçilmezse varsayılan olarak küçük harf kullansın
+            if (charPool === '') charPool = chars.lower;
+
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += charPool.charAt(Math.floor(Math.random() * charPool.length));
+            }
+
+            resultEl.innerText = password;
+        });
+
+        clipboardEl.addEventListener('click', () => {
+            const password = resultEl.innerText;
+            if (!password || password === "Şifre Bekleniyor...") return;
+            
+            const textArea = document.createElement('textarea');
+            textArea.value = password;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Şifre kopyalandı!');
+        });
+    </script>
 </body>
 </html>

@@ -5,39 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Güvenli Şifre Üretici</title>
     <style>
-        :root { --primary: #6366f1; --bg: #0f172a; --card: #1e293b; }
+        :root {
+            --primary-color: #6366f1;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+        }
+
         body {
-            background: var(--bg); color: #f8fafc; font-family: sans-serif;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; margin: 0; padding: 20px;
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
+
         .container {
-            background: var(--card); padding: 2rem; border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px;
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
         }
+
+        h1 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.5rem;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
         .result-container {
-            background: rgba(15,23,42,0.6); display: flex;
-            justify-content: space-between; align-items: center;
-            padding: 15px; margin: 20px 0; border-radius: 8px;
-            border: 1px solid #334155; min-height: 30px;
+            background-color: rgba(15, 23, 42, 0.6);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            min-height: 24px;
         }
-        #result { word-break: break-all; font-size: 1.2rem; font-family: monospace; }
-        button { cursor: pointer; transition: 0.2s; }
-        #clipboard { background: var(--primary); border: none; color: white; padding: 8px; border-radius: 4px; }
-        .setting { display: flex; justify-content: space-between; margin: 15px 0; }
+
+        #result {
+            word-break: break-all;
+            font-size: 1.1rem;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+
+        #clipboard {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        #clipboard:active { transform: scale(0.95); }
+
+        .setting {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        input[type="number"] {
+            background: #334155;
+            border: 1px solid #475569;
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            width: 50px;
+            outline: none;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
         .btn-large {
             background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            color: white; border: none; padding: 15px; width: 100%;
-            border-radius: 8px; font-weight: bold; font-size: 1rem;
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: opacity 0.2s;
         }
+
+        .btn-large:hover { opacity: 0.9; }
         .btn-large:active { transform: scale(0.98); }
-        input[type="number"] { background: #334155; border: 1px solid #475569; color: white; padding: 5px; border-radius: 4px; width: 50px; }
+
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2 style="margin-top:0; color:var(--primary)">Şifre Üretici</h2>
+        <h1>Şifre Üretici</h1>
         
         <div class="result-container">
             <span id="result">Şifre Bekleniyor...</span>
@@ -46,24 +128,24 @@
 
         <div class="settings">
             <div class="setting">
-                <label>Uzunluk</label>
+                <label>Karakter Uzunluğu</label>
                 <input type="number" id="length" min="4" max="50" value="12">
             </div>
             <div class="setting">
-                <label>Büyük Harf</label>
+                <label>Büyük Harf (A-Z)</label>
                 <input type="checkbox" id="uppercase" checked>
             </div>
             <div class="setting">
-                <label>Sayılar</label>
+                <label>Sayılar (0-9)</label>
                 <input type="checkbox" id="numbers" checked>
             </div>
             <div class="setting">
-                <label>Semboller</label>
+                <label>Semboller (!@#$)</label>
                 <input type="checkbox" id="symbols">
             </div>
         </div>
 
-        <button class="btn-large" id="generate">ŞİFRE OLUŞTUR</button>
+        <button class="btn-large" id="generate">YENİ ŞİFRE OLUŞTUR</button>
     </div>
 
     <script>
@@ -75,51 +157,65 @@
         const generateEl = document.getElementById('generate');
         const clipboardEl = document.getElementById('clipboard');
 
-        const chars = {
+        const charSets = {
             upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
             lower: 'abcdefghijklmnopqrstuvwxyz',
             number: '0123456789',
-            symbol: '!@#$%^&*()_+=-'
+            symbol: '!@#$%^&*()_+=-{}[]'
         };
 
-        generateEl.addEventListener('click', () => {
-            const length = +lengthEl.value;
+        // Şifre Üretme Fonksiyonu
+        function generatePassword() {
+            const length = parseInt(lengthEl.value);
             const hasUpper = uppercaseEl.checked;
             const hasNumber = numbersEl.checked;
             const hasSymbol = symbolsEl.checked;
 
-            let charPool = chars.lower; // Küçük harf her zaman olsun mu? 
-            // Eğer sadece sayılar işaretliyse küçük harfi çıkaralım:
-            if (hasUpper || hasNumber || hasSymbol) {
-                charPool = ''; 
-                if (hasUpper) charPool += chars.upper;
-                if (hasNumber) charPool += chars.number;
-                if (hasSymbol) charPool += chars.symbol;
-            }
+            let charPool = "";
 
-            // Eğer hiçbir şey seçilmezse varsayılan olarak küçük harf kullansın
-            if (charPool === '') charPool = chars.lower;
+            // Havuz oluşturma
+            if (hasUpper) charPool += charSets.upper;
+            if (hasNumber) charPool += charSets.number;
+            if (hasSymbol) charPool += charSets.symbol;
+            
+            // Eğer hiçbir şey seçilmemişse veya sadece harf isteniyorsa varsayılan küçük harf
+            // Sadece sayılar seçiliyse charPool sadece sayılardan oluşur
+            if (charPool === "") {
+                charPool = charSets.lower;
+            } else if (!hasUpper && hasNumber && !hasSymbol) {
+                // Sadece sayılar kutusu işaretliyse küçük harfleri ekleme
+                charPool = charSets.number;
+            } else {
+                // Harf karışımı isteniyorsa küçük harfleri de havuza ekle
+                charPool += charSets.lower;
+            }
 
             let password = '';
             for (let i = 0; i < length; i++) {
-                password += charPool.charAt(Math.floor(Math.random() * charPool.length));
+                const randomIndex = Math.floor(Math.random() * charPool.length);
+                password += charPool.charAt(randomIndex);
             }
 
             resultEl.innerText = password;
-        });
+        }
 
-        clipboardEl.addEventListener('click', () => {
+        // Kopyalama Fonksiyonu
+        function copyToClipboard() {
             const password = resultEl.innerText;
             if (!password || password === "Şifre Bekleniyor...") return;
-            
-            const textArea = document.createElement('textarea');
-            textArea.value = password;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert('Şifre kopyalandı!');
-        });
+
+            navigator.clipboard.writeText(password).then(() => {
+                const originalText = clipboardEl.innerText;
+                clipboardEl.innerText = "OK!";
+                setTimeout(() => { clipboardEl.innerText = originalText; }, 1500);
+            }).catch(err => {
+                alert('Kopyalanamadı: ', err);
+            });
+        }
+
+        // Event Listeners
+        generateEl.addEventListener('click', generatePassword);
+        clipboardEl.addEventListener('click', copyToClipboard);
     </script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 // ... üst kısımdaki değişkenler ve randomFunc aynı kalacak ...
 
+alert("Dosya başarıyla yüklendi!");
 function generatePassword(upper, number, symbol, length) {
     let generatedPassword = '';
     

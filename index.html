@@ -2,34 +2,41 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Şifre Oluşturucu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Şifre Üretici</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Şifre Oluşturucu</h1>
+        <h1>Şifre Üretici</h1>
+        
         <div class="result-container">
-            <span id="result">Şifreniz burada görünecek</span>
+            <span id="result">Şifre Bekleniyor...</span>
+            <button id="clipboard" title="Kopyala">
+                📋
+            </button>
         </div>
+
         <div class="settings">
             <div class="setting">
                 <label>Uzunluk</label>
-                <input type="number" id="length" min="4" max="20" value="12">
+                <input type="number" id="length" min="4" max="25" value="12">
             </div>
             <div class="setting">
-                <label>Büyük Harf İçersin</label>
+                <label>Büyük Harf</label>
                 <input type="checkbox" id="uppercase" checked>
             </div>
             <div class="setting">
-                <label>Sayı İçersin</label>
+                <label>Sayılar</label>
                 <input type="checkbox" id="numbers" checked>
             </div>
             <div class="setting">
-                <label>Sembol İçersin</label>
+                <label>Semboller</label>
                 <input type="checkbox" id="symbols" checked>
             </div>
         </div>
-        <button id="generate">Şifre Üret</button>
+
+        <button class="btn-large" id="generate">YENİ ŞİFRE OLUŞTUR</button>
     </div>
     <script src="script.js"></script>
 </body>

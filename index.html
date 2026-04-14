@@ -50,14 +50,16 @@
             margin-bottom: 20px;
             border-radius: 8px;
             border: 1px solid #334155;
-            min-height: 24px;
+            min-height: 28px;
         }
 
         #result {
             word-break: break-all;
             font-size: 1.1rem;
-            font-family: monospace;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
             letter-spacing: 1px;
+            color: #fff;
         }
 
         #clipboard {
@@ -67,12 +69,11 @@
             padding: 8px 12px;
             cursor: pointer;
             border-radius: 6px;
-            font-size: 0.9rem;
-            white-space: nowrap;
-            margin-left: 10px;
+            font-size: 0.8rem;
+            transition: 0.2s;
         }
 
-        #clipboard:active { transform: scale(0.95); }
+        #clipboard:hover { background: #4f46e5; }
 
         .setting {
             display: flex;
@@ -88,13 +89,14 @@
             padding: 5px;
             border-radius: 4px;
             width: 50px;
-            outline: none;
+            text-align: center;
         }
 
         input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             cursor: pointer;
+            accent-color: var(--primary-color);
         }
 
         .btn-large {
@@ -108,12 +110,9 @@
             font-size: 1rem;
             cursor: pointer;
             margin-top: 10px;
-            transition: opacity 0.2s;
         }
 
-        .btn-large:hover { opacity: 0.9; }
         .btn-large:active { transform: scale(0.98); }
-
     </style>
 </head>
 <body>
@@ -128,12 +127,12 @@
 
         <div class="settings">
             <div class="setting">
-                <label>Karakter Uzunluğu</label>
+                <label>Uzunluk</label>
                 <input type="number" id="length" min="4" max="50" value="12">
             </div>
             <div class="setting">
-                <label>Büyük Harf (A-Z)</label>
-                <input type="checkbox" id="uppercase" checked>
+                <label>Harfler (A-z)</label>
+                <input type="checkbox" id="letters" checked>
             </div>
             <div class="setting">
                 <label>Sayılar (0-9)</label>
@@ -151,7 +150,7 @@
     <script>
         const resultEl = document.getElementById('result');
         const lengthEl = document.getElementById('length');
-        const uppercaseEl = document.getElementById('uppercase');
+        const lettersEl = document.getElementById('letters');
         const numbersEl = document.getElementById('numbers');
         const symbolsEl = document.getElementById('symbols');
         const generateEl = document.getElementById('generate');
@@ -161,33 +160,31 @@
             upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
             lower: 'abcdefghijklmnopqrstuvwxyz',
             number: '0123456789',
-            symbol: '!@#$%^&*()_+=-{}[]'
+            symbol: '!@#$%^&*()_+=-'
         };
 
-        // Şifre Üretme Fonksiyonu
         function generatePassword() {
             const length = parseInt(lengthEl.value);
-            const hasUpper = uppercaseEl.checked;
-            const hasNumber = numbersEl.checked;
-            const hasSymbol = symbolsEl.checked;
+            const hasLetters = lettersEl.checked;
+            const hasNumbers = numbersEl.checked;
+            const hasSymbols = symbolsEl.checked;
 
             let charPool = "";
 
             // Havuz oluşturma
-            if (hasUpper) charPool += charSets.upper;
-            if (hasNumber) charPool += charSets.number;
-            if (hasSymbol) charPool += charSets.symbol;
-            
-            // Eğer hiçbir şey seçilmemişse veya sadece harf isteniyorsa varsayılan küçük harf
-            // Sadece sayılar seçiliyse charPool sadece sayılardan oluşur
+            if (hasLetters) {
+                charPool += charSets.upper + charSets.lower;
+            }
+            if (hasNumbers) {
+                charPool += charSets.number;
+            }
+            if (hasSymbols) {
+                charPool += charSets.symbol;
+            }
+
+            // Eğer hiçbir şey seçilmemişse varsayılan olarak bir şeyler ekle (Hata almamak için)
             if (charPool === "") {
                 charPool = charSets.lower;
-            } else if (!hasUpper && hasNumber && !hasSymbol) {
-                // Sadece sayılar kutusu işaretliyse küçük harfleri ekleme
-                charPool = charSets.number;
-            } else {
-                // Harf karışımı isteniyorsa küçük harfleri de havuza ekle
-                charPool += charSets.lower;
             }
 
             let password = '';
@@ -199,21 +196,17 @@
             resultEl.innerText = password;
         }
 
-        // Kopyalama Fonksiyonu
         function copyToClipboard() {
             const password = resultEl.innerText;
             if (!password || password === "Şifre Bekleniyor...") return;
 
             navigator.clipboard.writeText(password).then(() => {
                 const originalText = clipboardEl.innerText;
-                clipboardEl.innerText = "OK!";
+                clipboardEl.innerText = "Kopyalandı!";
                 setTimeout(() => { clipboardEl.innerText = originalText; }, 1500);
-            }).catch(err => {
-                alert('Kopyalanamadı: ', err);
             });
         }
 
-        // Event Listeners
         generateEl.addEventListener('click', generatePassword);
         clipboardEl.addEventListener('click', copyToClipboard);
     </script>

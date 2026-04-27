@@ -1,0 +1,21 @@
+{
+  "name": "Parolam",
+  "short_name": "Parolam",
+  "description": "Güçlü ve Güvenli Şifre Oluşturucu",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0a0e17",
+  "theme_color": "#00f2fe",
+  "icons": [
+    {
+      "src": "parolam_logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "parolam_logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

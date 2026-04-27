@@ -3,212 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Güvenli Şifre Üretici</title>
-    <style>
-        :root {
-            --primary-color: #6366f1;
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            background-color: var(--card-bg);
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-        }
-
-        h1 {
-            margin: 0 0 1.5rem 0;
-            font-size: 1.5rem;
-            text-align: center;
-            color: var(--primary-color);
-        }
-
-        .result-container {
-            background-color: rgba(15, 23, 42, 0.6);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            min-height: 28px;
-        }
-
-        #result {
-            word-break: break-all;
-            font-size: 1.1rem;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            letter-spacing: 1px;
-            color: #fff;
-        }
-
-        #clipboard {
-            background: var(--primary-color);
-            border: none;
-            color: white;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            transition: 0.2s;
-        }
-
-        #clipboard:hover { background: #4f46e5; }
-
-        .setting {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 15px 0;
-        }
-
-        input[type="number"] {
-            background: #334155;
-            border: 1px solid #475569;
-            color: white;
-            padding: 5px;
-            border-radius: 4px;
-            width: 50px;
-            text-align: center;
-        }
-
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--primary-color);
-        }
-
-        .btn-large {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            color: white;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .btn-large:active { transform: scale(0.98); }
-    </style>
+    <title>Parolam - Güçlü Şifre Oluşturucu</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00f2fe">
+    <link rel="icon" type="image/png" href="parolam_logo.png">
+    <link rel="apple-touch-icon" href="parolam_logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="container">
-        <h1>Şifre Üretici</h1>
-        
-        <div class="result-container">
-            <span id="result">Şifre Bekleniyor...</span>
-            <button id="clipboard">Kopyala</button>
-        </div>
-
-        <div class="settings">
-            <div class="setting">
-                <label>Uzunluk</label>
-                <input type="number" id="length" min="4" max="50" value="12">
-            </div>
-            <div class="setting">
-                <label>Harfler (A-z)</label>
-                <input type="checkbox" id="letters" checked>
-            </div>
-            <div class="setting">
-                <label>Sayılar (0-9)</label>
-                <input type="checkbox" id="numbers" checked>
-            </div>
-            <div class="setting">
-                <label>Semboller (!@#$)</label>
-                <input type="checkbox" id="symbols">
-            </div>
-        </div>
-
-        <button class="btn-large" id="generate">YENİ ŞİFRE OLUŞTUR</button>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
     </div>
 
-    <script>
-        const resultEl = document.getElementById('result');
-        const lengthEl = document.getElementById('length');
-        const lettersEl = document.getElementById('letters');
-        const numbersEl = document.getElementById('numbers');
-        const symbolsEl = document.getElementById('symbols');
-        const generateEl = document.getElementById('generate');
-        const clipboardEl = document.getElementById('clipboard');
+    <main class="container">
+        <header>
+            <div class="logo-container">
+                <img src="parolam_logo.png" alt="Parolam Logo" id="app-logo" class="logo">
+            </div>
+            <h1>Parolam</h1>
+            <p class="subtitle">Güvenliğiniz bizim önceliğimizdir.</p>
+        </header>
 
-        const charSets = {
-            upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-            lower: 'abcdefghijklmnopqrstuvwxyz',
-            number: '0123456789',
-            symbol: '!@#$%^&*()_+=-'
-        };
+        <section class="result-section">
+            <div class="result-container">
+                <span id="result">Şifreniz burada görünecek</span>
+                <button id="clipboard" class="copy-btn" title="Kopyala">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </button>
+            </div>
+            <div class="strength-meter">
+                <div id="strength-bar" class="strength-bar"></div>
+                <span id="strength-text">Güç: -</span>
+            </div>
+        </section>
 
-        function generatePassword() {
-            const length = parseInt(lengthEl.value);
-            const hasLetters = lettersEl.checked;
-            const hasNumbers = numbersEl.checked;
-            const hasSymbols = symbolsEl.checked;
+        <section class="settings">
+            <div class="setting-group">
+                <div class="setting-header">
+                    <label for="length">Şifre Uzunluğu</label>
+                    <span id="length-val">12</span>
+                </div>
+                <input type="range" id="length" min="6" max="32" value="12" class="slider">
+            </div>
 
-            let charPool = "";
+            <div class="options-grid">
+                <div class="setting">
+                    <label class="checkbox-container">
+                        Büyük Harf
+                        <input type="checkbox" id="uppercase" checked>
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <div class="setting">
+                    <label class="checkbox-container">
+                        Küçük Harf
+                        <input type="checkbox" id="lowercase" checked>
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <div class="setting">
+                    <label class="checkbox-container">
+                        Sayılar
+                        <input type="checkbox" id="numbers" checked>
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <div class="setting">
+                    <label class="checkbox-container">
+                        Semboller
+                        <input type="checkbox" id="symbols" checked>
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
 
-            // Havuz oluşturma
-            if (hasLetters) {
-                charPool += charSets.upper + charSets.lower;
-            }
-            if (hasNumbers) {
-                charPool += charSets.number;
-            }
-            if (hasSymbols) {
-                charPool += charSets.symbol;
-            }
+        <button id="generate" class="main-btn">Şifre Üret</button>
+    </main>
 
-            // Eğer hiçbir şey seçilmemişse varsayılan olarak bir şeyler ekle (Hata almamak için)
-            if (charPool === "") {
-                charPool = charSets.lower;
-            }
+    <footer class="app-footer">
+        <p>&copy; 2024 Parolam. Tüm hakları saklıdır.</p>
+    </footer>
 
-            let password = '';
-            for (let i = 0; i < length; i++) {
-                const randomIndex = Math.floor(Math.random() * charPool.length);
-                password += charPool.charAt(randomIndex);
-            }
-
-            resultEl.innerText = password;
-        }
-
-        function copyToClipboard() {
-            const password = resultEl.innerText;
-            if (!password || password === "Şifre Bekleniyor...") return;
-
-            navigator.clipboard.writeText(password).then(() => {
-                const originalText = clipboardEl.innerText;
-                clipboardEl.innerText = "Kopyalandı!";
-                setTimeout(() => { clipboardEl.innerText = originalText; }, 1500);
-            });
-        }
-
-        generateEl.addEventListener('click', generatePassword);
-        clipboardEl.addEventListener('click', copyToClipboard);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

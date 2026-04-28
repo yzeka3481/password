@@ -5,6 +5,7 @@ const uppercaseEl = document.getElementById('uppercase');
 const lowercaseEl = document.getElementById('lowercase');
 const numbersEl = document.getElementById('numbers');
 const symbolsEl = document.getElementById('symbols');
+const excludeCharsEl = document.getElementById('exclude-chars');
 const generateEl = document.getElementById('generate');
 const clipboardEl = document.getElementById('clipboard');
 const strengthBar = document.getElementById('strength-bar');
@@ -52,13 +53,14 @@ generateEl.addEventListener('click', () => {
     const hasLower = lowercaseEl.checked;
     const hasNumber = numbersEl.checked;
     const hasSymbol = symbolsEl.checked;
+    const excludeChars = excludeCharsEl.value;
 
-    const password = generatePassword(hasUpper, hasLower, hasNumber, hasSymbol, length);
+    const password = generatePassword(hasUpper, hasLower, hasNumber, hasSymbol, length, excludeChars);
     resultEl.innerText = password;
     updateStrength(password);
 });
 
-function generatePassword(upper, lower, number, symbol, length) {
+function generatePassword(upper, lower, number, symbol, length, excludeChars) {
     let generatedPassword = '';
     const typesArr = [];
     
@@ -68,10 +70,23 @@ function generatePassword(upper, lower, number, symbol, length) {
     if (symbol) typesArr.push('symbol');
 
     if (typesArr.length === 0) return 'Seçim yapın!';
+    
+    const excludedArray = excludeChars ? excludeChars.split('') : [];
+    let attemptCount = 0;
 
-    for (let i = 0; i < length; i++) {
+    while (generatedPassword.length < length) {
         const randomType = typesArr[Math.floor(Math.random() * typesArr.length)];
-        generatedPassword += randomFunc[randomType]();
+        const char = randomFunc[randomType]();
+        
+        if (!excludedArray.includes(char)) {
+            generatedPassword += char;
+            attemptCount = 0;
+        } else {
+            attemptCount++;
+            if (attemptCount > 200) {
+                return 'Hata: Kriterler çok kısıtlayıcı!';
+            }
+        }
     }
 
     return generatedPassword;
@@ -79,7 +94,7 @@ function generatePassword(upper, lower, number, symbol, length) {
 
 function updateStrength(password) {
     let score = 0;
-    if (!password) {
+    if (!password || password === 'Seçim yapın!' || password.startsWith('Hata:')) {
         strengthBar.style.width = '0%';
         strengthText.innerText = 'Güç: -';
         return;

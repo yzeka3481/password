@@ -1,3 +1,26 @@
+/* ═══════════════════════════════════════════════
+   script.js — Şifre Üretici + Tab Navigation
+   ═══════════════════════════════════════════════ */
+
+// ── Tab Navigation ─────────────────────────────
+const tabs = document.querySelectorAll('.tab');
+const pages = document.querySelectorAll('.page');
+
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        const targetId = tab.dataset.page;
+
+        // Switch pages
+        pages.forEach(p => p.classList.remove('active'));
+        document.getElementById(targetId).classList.add('active');
+
+        // Switch tab highlight
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+    });
+});
+
+// ── Password Generator ────────────────────────
 const resultEl = document.getElementById('result');
 const lengthEl = document.getElementById('length');
 const lengthValEl = document.getElementById('length-val');
@@ -41,7 +64,7 @@ function showToast(message) {
     
     setTimeout(() => {
         toast.style.opacity = '0';
-        toast.style.transform = 'translateY(100px)';
+        toast.style.transform = 'translateX(-50%) translateY(100px)';
         setTimeout(() => toast.remove(), 300);
     }, 2000);
 }
@@ -125,4 +148,4 @@ function updateStrength(password) {
     strengthBar.style.backgroundColor = color;
     strengthText.innerText = `Güç: ${text}`;
     strengthText.style.color = color;
-}
+}

@@ -19,6 +19,25 @@
         <div class="blob blob-2"></div>
     </div>
 
+    <!-- ═══════ Master Password Overlay ═══════ -->
+    <div id="master-overlay" class="vault-overlay" style="z-index: 999; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);">
+        <div class="vault-modal master-modal" style="text-align: center;">
+            <div class="logo-container" style="margin-bottom: 15px;">
+                <img src="parolam_logo.png" alt="Parolam Logo" class="logo" style="width: 48px; height: 48px;">
+            </div>
+            <h3 id="master-title" style="margin-bottom: 8px;">Ana Parola Belirle</h3>
+            <p id="master-desc" class="dim" style="font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">Parolalarınızı güvenle şifrelemek için bir ana parola oluşturun. Bu parola olmadan verilerinize ulaşılamaz.</p>
+            
+            <form id="master-form" autocomplete="off" style="width: 100%;">
+                <div class="vault-field">
+                    <input type="password" id="master-pw-input" placeholder="Ana Parolanız" required style="text-align: center; font-size: 1.1rem; letter-spacing: 2px;" />
+                </div>
+                <div id="master-error" style="color: #ff4d4d; font-size: 0.8rem; margin-bottom: 15px; display: none;">Hatalı parola!</div>
+                <button type="submit" class="main-btn" id="master-submit-btn">Kilidi Aç</button>
+            </form>
+        </div>
+    </div>
+
     <!-- ═══════════════════════════════════════
          PAGE 1: PAROLA DEFTERİ (Varsayılan)
          ═══════════════════════════════════════ -->
@@ -236,6 +255,7 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="script.js"></script>
     <script src="vault.js"></script>
 </body>

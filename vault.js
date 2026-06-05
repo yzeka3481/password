@@ -39,15 +39,20 @@
   // ── State ────────────────────────────────────
   let entries = [];
   let deleteId = null;
+  let masterKey = null;
 
   // ── Utils ────────────────────────────────────
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
-  function save() { localStorage.setItem(STORE, JSON.stringify(entries)); }
+  function save() { 
+    if (!masterKey) return;
+    const jsonStr = JSON.stringify(entries);
+    const encrypted = CryptoJS.AES.encrypt(jsonStr, masterKey).toString();
+    localStorage.setItem(STORE, encrypted); 
+  }
 
-  function load() {
-    try { entries = JSON.parse(localStorage.getItem(STORE)) || []; }
-    catch { entries = []; }
+  function loadRaw() {
+    return localStorage.getItem(STORE);
   }
 
   function fmtDate(ts) {
@@ -313,7 +318,86 @@
     }
   });
 
+  // ── Master Password Flow ─────────────────────
+  const masterOverlay = $('master-overlay');
+  const masterForm = $('master-form');
+  const masterInput = $('master-pw-input');
+  const masterTitle = $('master-title');
+  const masterDesc = $('master-desc');
+  const masterBtn = $('master-submit-btn');
+  const masterError = $('master-error');
+
+  function initApp() {
+    const data = loadRaw();
+    
+    if (!data) {
+      // First time setup
+      masterTitle.textContent = 'Ana Parola Belirle';
+      masterDesc.textContent = 'Parolalarınızı güvenle şifrelemek için bir ana parola oluşturun. Bu parola olmadan verilerinize ulaşılamaz.';
+      masterBtn.textContent = 'Kaydet ve Başla';
+      masterOverlay.dataset.mode = 'setup';
+    } else if (data.startsWith('[')) {
+      // Unencrypted old data found
+      masterTitle.textContent = 'Güvenlik Güncellemesi';
+      masterDesc.textContent = 'Kayıtlı parolalarınız bulundu! Bunları şifrelemek ve güvende tutmak için bir ana parola belirleyin.';
+      masterBtn.textContent = 'Şifrele ve Devam Et';
+      masterOverlay.dataset.mode = 'migrate';
+    } else {
+      // Encrypted data found
+      masterTitle.textContent = 'Kilidi Aç';
+      masterDesc.textContent = 'Parola defterinize erişmek için ana parolanızı girin.';
+      masterBtn.textContent = 'Kilidi Aç';
+      masterOverlay.dataset.mode = 'unlock';
+    }
+  }
+
+  masterForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const pw = masterInput.value;
+    if (!pw) return;
+
+    const mode = masterOverlay.dataset.mode;
+    const data = loadRaw();
+
+    if (mode === 'setup') {
+      masterKey = pw;
+      entries = [];
+      save();
+      unlockApp();
+    } else if (mode === 'migrate') {
+      try {
+        entries = JSON.parse(data) || [];
+        masterKey = pw;
+        save(); // Save encrypted
+        unlockApp();
+      } catch (err) {
+        masterError.textContent = 'Eski veriler okunamadı!';
+        masterError.style.display = 'block';
+      }
+    } else if (mode === 'unlock') {
+      try {
+        const bytes = CryptoJS.AES.decrypt(data, pw);
+        const decryptedStr = bytes.toString(CryptoJS.enc.Utf8);
+        
+        if (!decryptedStr) throw new Error('Bad password');
+        
+        entries = JSON.parse(decryptedStr) || [];
+        masterKey = pw;
+        unlockApp();
+      } catch (err) {
+        masterError.textContent = 'Hatalı parola!';
+        masterError.style.display = 'block';
+        masterInput.value = '';
+        masterInput.focus();
+      }
+    }
+  });
+
+  function unlockApp() {
+    masterOverlay.classList.add('hidden');
+    render();
+  }
+
   // ── Init ─────────────────────────────────────
-  load();
-  render();
+  initApp();
 })();
